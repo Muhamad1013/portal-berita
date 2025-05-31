@@ -12,11 +12,13 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['admin', 'user'])->default('user')->after('email');
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id(); // bigint unsigned PK AI
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->timestamps(); // created_at & updated_at
         });
     }
-
 
     /**
      * Reverse the migrations.
@@ -25,8 +27,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('role');
-        });
+        Schema::dropIfExists('categories');
     }
 };

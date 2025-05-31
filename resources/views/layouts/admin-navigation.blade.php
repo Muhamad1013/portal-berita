@@ -1,100 +1,105 @@
-<div style="display: flex; height: 100vh; font-family: sans-serif; background-color: #f3f4f6;"> <!-- Sidebar -->
-  <aside
-    style="width: 250px; background-color: #ffffff; border-right: 1px solid #e5e7eb; display: flex; flex-direction: column;">
-
+<div class="d-flex vh-100" style="font-family: sans-serif; background-color: #f3f4f6;">
+  <!-- Sidebar -->
+  <aside class="bg-white border-end d-flex flex-column" style="width: 250px;">
     <!-- Avatar -->
-    <div
-      style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem 0; border-bottom: 1px solid #e5e7eb;">
-      <div style="width: 80px; height: 80px; border-radius: 9999px; background-color: #9ca3af; margin-bottom: 0.5rem;">
-      </div>
-      <span style="font-size: 0.875rem; font-weight: 600; color: #374151;">Admin</span>
+    <div class="d-flex flex-column align-items-center justify-content-center py-4 border-bottom">
+      <div class="rounded-circle bg-secondary mb-2" style="width: 80px; height: 80px;"></div>
+      <span class="fw-semibold text-secondary small">Admin</span>
     </div>
 
     <!-- Navigation -->
-    <nav style="flex: 1; padding: 1.5rem 1rem; font-size: 0.875rem; font-weight: 500; color: #1f2937;">
-      <a href="{{ route('admin.dashboard') }}"
-        style="display: block; padding: 0.5rem 0.75rem; border-radius: 0.375rem; text-decoration: none; margin-bottom: 0.5rem; background-color: {{ request()->is('admin/dashboard') ? '#f3f4f6' : 'transparent' }};">
+    <nav class="flex-grow-1 px-3 py-4 fs-6 fw-medium text-dark">
+      <a href="{{ route('admin.dashboard') }}" class="d-block mb-2 px-3 py-2 rounded
+           {{ request()->is('admin/dashboard') ? 'bg-danger text-white' : 'text-dark' }}">
         Dashboard
       </a>
-      <a href="#"
-        style="display: block; padding: 0.5rem 0.75rem; border-radius: 0.375rem; text-decoration: none; margin-bottom: 0.5rem;"
-        onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+      <a href="{{ route('admin.news.index') }}" class="d-block mb-2 px-3 py-2 rounded
+           {{ request()->is('admin/news*') ? 'bg-danger text-white' : 'text-dark' }}">
         Berita
       </a>
-      <a href="#"
-        style="display: block; padding: 0.5rem 0.75rem; border-radius: 0.375rem; text-decoration: none; margin-bottom: 0.5rem;"
-        onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+      <a href="#" class="d-block mb-2 px-3 py-2 rounded
+           {{ request()->is('admin/categories*') ? 'bg-danger text-white' : 'text-dark' }}">
         Kategori
       </a>
-      <a href="#"
-        style="display: block; padding: 0.5rem 0.75rem; border-radius: 0.375rem; text-decoration: none; margin-bottom: 0.5rem;"
-        onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+      <a href="#" class="d-block mb-2 px-3 py-2 rounded
+           {{ request()->is('admin/users*') ? 'bg-danger text-white' : 'text-dark' }}">
         Pengguna
       </a>
     </nav>
 
     <!-- Logout -->
-    <div style="padding: 1rem; border-top: 1px solid #e5e7eb;">
+    <div class="p-3 border-top">
       <form method="POST" action="{{ route('logout') }}">
         @csrf
-        <button type="submit"
-          style="width: 100%; text-align: left; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #dc2626; border: none; background: none; cursor: pointer;"
-          onmouseover="this.style.color='#b91c1c'" onmouseout="this.style.color='#dc2626'">
+        <button type="submit" class="btn btn-link text-danger p-0 w-100 text-start"
+          onmouseover="this.classList.add('text-dark')" onmouseout="this.classList.remove('text-dark')">
           Keluar
         </button>
       </form>
     </div>
-  </aside> <!-- Main Content -->
-  <div style="flex: 1; display: flex; flex-direction: column;">
+  </aside>
 
+  <!-- Main Content -->
+  <div class="flex-grow-1 d-flex flex-column">
     <!-- Topbar -->
-    <header
-      style="height: 4rem; background-color: #dc2626; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-      <h1 style="font-size: 1.125rem; font-weight: bold;">Admin Panel</h1>
-      <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <div style="width: 12px; height: 12px; border-radius: 9999px; background-color: #fff;"></div>
-        <span style="font-size: 0.875rem;">{{ Auth::user()->name ?? 'Username' }}</span>
+    @php
+    $status = session('user_status', 'active');
+    $statusColors = [
+      'active' => '#22c55e',  // hijau
+      'dnd' => '#7f1d1d',     // merah gelap
+      'idle' => '#facc15',    // kuning
+    ];
+    $statusLabels = [
+      'active' => 'Aktif',
+      'dnd' => 'Do Not Disturb',
+      'idle' => 'Idle',
+    ];
+    @endphp
+
+    <header class="d-flex align-items-center justify-content-between px-4"
+      style="height: 4rem; background-color: #dc2626; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-radius: 0 0 0.5rem 0.5rem;">
+      <h1 class="fs-5 fw-bold m-0 d-flex align-items-center" style="height: 100%;">Admin Panel</h1>
+
+      <div class="d-flex align-items-center gap-2">
+
+        <!-- Dropdown status -->
+        <x-dropdown align="right" width="48">
+          <x-slot name="trigger">
+            {{-- Bulatan status dengan tooltip --}}
+            <button class="d-flex align-items-center justify-content-center"
+              style="width: 14px; height: 14px; border-radius: 50%; background-color: {{ $statusColors[$status] }}; border:none; cursor:pointer;"
+              title="{{ $statusLabels[$status] }}">
+            </button>
+          </x-slot>
+
+          <x-slot name="content">
+            <form method="POST" action="{{ route('admin.status.update') }}" id="statusForm">
+              @csrf
+              @foreach ($statusColors as $key => $color)
+          <button type="submit" name="status" value="{{ $key }}"
+          style="font-size:13px; color:rgba(0, 0, 0, 0.589); display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.5rem 1rem; border: none; background: none; cursor: pointer; text-align: left;"
+          onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'"
+          title="{{ $statusLabels[$key] }}">
+          <span
+            style="width: 12px; height: 12px; border-radius: 50%; background-color: {{ $color }}; display:inline-block;"></span>
+          {{ ucfirst($statusLabels[$key]) }}
+          </button>
+        @endforeach
+            </form>
+          </x-slot>
+        </x-dropdown>
+
+        <span class="small text-white d-flex align-items-center">
+          {{ Auth::user()->name ?? 'Username' }}
+        </span>
       </div>
     </header>
 
+
     <!-- Content -->
-    <main style="flex: 1; background-color: #f9fafb; padding: 1.5rem; overflow-y: auto;">
-
-      <!-- Top Buttons -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <div style="display: flex; gap: 0.5rem;">
-          <button
-            style="padding: 0.5rem 1rem; font-size: 0.875rem; background-color: #fff; border: 1px solid #d1d5db; border-radius: 0.375rem; cursor: pointer;"
-            onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='#fff'">
-            Tambah
-          </button>
-          <button
-            style="padding: 0.5rem 1rem; font-size: 0.875rem; background-color: #fff; border: 1px solid #d1d5db; border-radius: 0.375rem; cursor: pointer;"
-            onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='#fff'">
-            Filter
-          </button>
-          <button
-            style="padding: 0.5rem 1rem; font-size: 0.875rem; background-color: #fff; border: 1px solid #d1d5db; border-radius: 0.375rem; cursor: pointer;"
-            onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='#fff'">
-            Ekspor
-          </button>
-        </div>
-        <div style="width: 12rem; height: 1.5rem; background-color: #d1d5db; border-radius: 0.375rem;"></div>
-      </div>
-
-      <!-- Main Content Box -->
-      <div
-        style="background-color: #ffffff; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; min-height: 300px;">
+    <main class="flex-grow-1 bg-light p-4 overflow-auto">
+      <div class="bg-white rounded-3 shadow-sm p-4 min-vh-50">
         @yield('content')
-      </div>
-
-      <!-- Bottom Save Button -->
-      <div style="margin-top: 2rem; display: flex; justify-content: center;">
-        <button
-          style="padding: 0.5rem 1.5rem; background-color: #dc2626; color: white; border-radius: 0.375rem; border: none; cursor: pointer;"
-          onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
-          Simpan
-        </button>
       </div>
     </main>
   </div>
