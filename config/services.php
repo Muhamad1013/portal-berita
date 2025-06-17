@@ -31,4 +31,16 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // 'newsdata' => [
+    //     'api_key' => env('NEWSDATA_API_KEY'),
+    // ],
+
+    'mediastack' => [
+        'api_key' => env('MEDIASTACK_API_KEY'),
+    ],
+
+
+
+
+
 ];

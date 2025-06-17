@@ -11,6 +11,16 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/redirect', function () {
+    $role = auth()->user()->role;
+    return match ($role) {
+        'admin' => redirect('/admin/dashboard'),
+        'user' => redirect('/beranda'),
+        default => abort(403, 'Role tidak dikenali.'),
+    };
+})->middleware(['auth'])->name('redirect');
+
+
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');

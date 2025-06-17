@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Models\Category;
 
-class CategoryController extends Controller
+class AdminCategoryController extends Controller
 {
   public function index()
   {
-    $categories = Category::latest()->paginate(10);
+    $categories = Category::latest()->get();
     return view('admin.categories.index', compact('categories'));
   }
 
@@ -22,8 +21,7 @@ class CategoryController extends Controller
   public function store(Request $request)
   {
     $validated = $request->validate([
-      'name' => 'required|string|max:100|unique:categories,name',
-      'slug' => 'required|string|unique:categories,slug',
+      'name' => 'required|string|max:255|unique:categories,name',
     ]);
 
     Category::create($validated);
@@ -31,16 +29,18 @@ class CategoryController extends Controller
     return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil ditambahkan.');
   }
 
-  public function edit(Category $category)
+  public function edit($id)
   {
+    $category = Category::findOrFail($id);
     return view('admin.categories.edit', compact('category'));
   }
 
-  public function update(Request $request, Category $category)
+  public function update(Request $request, $id)
   {
+    $category = Category::findOrFail($id);
+
     $validated = $request->validate([
-      'name' => 'required|string|max:100|unique:categories,name,' . $category->id,
-      'slug' => 'required|string|unique:categories,slug,' . $category->id,
+      'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
     ]);
 
     $category->update($validated);
@@ -48,9 +48,12 @@ class CategoryController extends Controller
     return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil diperbarui.');
   }
 
-  public function destroy(Category $category)
+  public function destroy($id)
   {
+    $category = Category::findOrFail($id);
     $category->delete();
+
     return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil dihapus.');
   }
+
 }
