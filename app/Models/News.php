@@ -6,13 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class News extends Model
 {
-    protected $fillable = ['title', 'content', 'author_id', 'gambar'];
+    protected $table = 'news'; // sesuaikan nama tabelnya
+
+    protected $fillable = [
+        'title',
+        'content',
+        'gambar',
+        'views',
+        'created_at',
+        'updated_at',
+    ];
+
 
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'category_news');
     }
-
 
     public function editor()
     {

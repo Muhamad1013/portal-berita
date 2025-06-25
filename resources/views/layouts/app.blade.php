@@ -5,11 +5,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ config('app.name', 'FastNews') }}</title>
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    {{-- <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        integrity="sha512-Fo3rlrZj/kTcI3FUn2+/wzCk0sCKShsGcRUf1L7eYJHcN8mP8Xwhe1MgC0hvZDZxTTyTxeknRla4Z5u0eRljVw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" /> --}}
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -24,29 +35,34 @@
         }
     </style>
 
-    <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body>
-    <div>
-        {{-- Navigation Bar --}}
-        @include('layouts.navigation')
-
-        <!-- Page Heading -->
-        @if (isset($header))
-            <header>
-                <div>
-                    {{ $header }}
-                </div>
-            </header>
+    @auth
+        @if (Auth::user()->role === 'admin')
+            @include('layouts.admin')
+        @else
+            @include('layouts.navigation') {{-- User login --}}
         @endif
+    @else
+        @include('layouts.navigation') {{-- Guest view --}}
+    @endauth
 
-        <!-- Page Content -->
-        <main class="py-6 px-4 sm:px-6 lg:px-8">
-            @yield('content')
-        </main>
-    </div>
+    @if (isset($header))
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                {{ $header }}
+            </div>
+        </header>
+    @endif
+
+    <main class="py-6 px-4 sm:px-6 lg:px-8">
+        @yield('content')
+    </main>
+
+    {{-- Include Footer --}}
+    @include('layouts.footer')
 </body>
 
 </html>
