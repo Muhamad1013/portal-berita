@@ -75,9 +75,18 @@ class UserController extends Controller
             ['path' => request()->url(), 'query' => request()->query()]
         );
 
+        $otherArticles = News::whereHas('categories', function ($q) use ($category) {
+            $q->where('categories.id', '!=', $category->id);
+        })
+            ->latest()
+            ->take(5)
+            ->get();
+
+
         return view('user.beranda-filtered', [
             'category' => $category,
-            'filteredArticles' => $paginated
+            'filteredArticles' => $paginated,
+            'otherArticles' => $otherArticles,
         ]);
     }
 
@@ -96,10 +105,12 @@ class UserController extends Controller
         })
             ->where('id', '!=', $berita->id)
             ->latest()
-            ->take(4)
+            ->take(5)
             ->get();
 
-        return view('user.berita-show', compact('berita', 'relatedNews'));
+        $popularNews = News::orderBy('views', 'desc')->take(5)->get();
+
+        return view('user.berita-show', compact('berita', 'relatedNews', 'popularNews'));
     }
 
 
