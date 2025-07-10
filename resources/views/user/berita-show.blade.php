@@ -115,49 +115,76 @@
             color: #dc2626;
         }
 
-        .comment-box textarea {
-            resize: vertical;
-            border-radius: 8px;
-            border: 1px solid #dee2e6;
-            padding: 12px;
+        .comment-item {
+            margin-top: 20px;
+            border-radius: 12px;
+            transition: background-color 0.3s ease;
             font-size: 0.95rem;
         }
 
-        .comment-item {
-            background-color: #f9fafb;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #e5e7eb;
+        .comment-item.reply {
+            padding: 16px;
+            border-left: 4px solid #dc2626;
         }
+
+
+        .comment-item .rounded-circle {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
 
         .comment-item strong {
+            color: #dc2626;
             font-weight: 600;
-            font-size: 15px;
         }
 
-        .comment-item small {
+        .comment-item .text-muted {
+            font-size: 13px;
+        }
+
+        .comment-item .btn {
             font-size: 13px;
             color: #6b7280;
+            transition: color 0.2s ease;
         }
 
-        .comment-item p {
-            margin-top: 8px;
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: #374151;
+
+        .comment-item .btn.text-primary {
+            color: #dc2626 !important;
         }
 
-        .comment-item .d-flex span {
-            font-size: 14px;
-            cursor: pointer;
-            color: #4b5563;
-            transition: color 0.3s;
+        .comment-item .btn.text-secondary {
+            color: #6b7280 !important;
         }
 
-        .comment-item .d-flex span:hover {
+
+        .comment-item .btn-primary {
+            background-color: #dc2626;
+            border-color: #dc2626;
+            font-size: 13px;
+            padding: 4px 10px;
+        }
+
+        .comment-item .btn-primary:hover {
+            background-color: #b91c1c;
+            border-color: #b91c1c;
+        }
+
+        .comment-item .btn-link {
             color: #dc2626;
+            font-size: 14px;
+            text-decoration: none;
         }
+
+        .comment-item .btn-link:hover {
+            text-decoration: underline;
+        }
+
+        .comment-item i.fa-trash:hover {
+            color: #dc2626 !important;
+        }
+
 
         @media (max-width: 767.98px) {
             .headline-img {
@@ -209,8 +236,11 @@
             gap: 15px;
             align-items: start;
         }
-    </style>
 
+        .share-icon:hover {
+            opacity: 0.85;
+        }
+    </style>
 
     <div class="container py-5">
         <div class="row">
@@ -221,7 +251,6 @@
                     <small>{{ $berita->author ?? 'Admin' }} | {{ $berita->created_at->format('d F Y H:i') }} WIB</small>
 
                     <img src="{{ asset('storage/' . $berita->gambar) }}" alt="{{ $berita->title }}" class="headline-img">
-
 
                     <div class="headline-content content-wrapper">
                         @php
@@ -278,7 +307,6 @@
                         @endforeach
                     </div>
 
-
                     <!-- Kategori Terkait -->
                     <div class="d-flex flex-wrap gap-1 mb-4">
                         @foreach($berita->categories as $category)
@@ -288,32 +316,254 @@
                         @endforeach
                     </div>
 
+                    <!-- Bagikan -->
+                    <div class="d-flex align-items-center gap-3 mt-3" style="font-size: 1rem;">
+                        <strong class="">Bagikan:</strong>
+                        <span
+                            onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->fullUrl()) }}', '_blank')"
+                            class="text-primary share-icon" style="cursor: pointer;">
+                            <i class="fab fa-facebook-f me-1"></i>Facebook
+                        </span>
+                        <span
+                            onclick="window.open('https://twitter.com/intent/tweet?url={{ urlencode(request()->fullUrl()) }}&text={{ urlencode($berita->title) }}', '_blank')"
+                            class="text-info share-icon" style="cursor: pointer;">
+                            <i class="fab fa-twitter me-1"></i>Twitter
+                        </span>
+                        <span
+                            onclick="window.open('https://api.whatsapp.com/send?text={{ urlencode($berita->title . ' ' . request()->fullUrl()) }}', '_blank')"
+                            class="text-success share-icon" style="cursor: pointer;">
+                            <i class="fab fa-whatsapp me-1"></i>WhatsApp
+                        </span>
+                        <span
+                            onclick="window.open('https://t.me/share/url?url={{ urlencode(request()->fullUrl()) }}&text={{ urlencode($berita->title) }}', '_blank')"
+                            class="text-primary share-icon" style="cursor: pointer;">
+                            <i class="fab fa-telegram-plane me-1"></i>Telegram
+                        </span>
+                        <span onclick="copyLink('{{ request()->fullUrl() }}')" class="text-secondary share-icon"
+                            style="cursor: pointer;">
+                            <i class="fa fa-link me-1"></i>Salin Link
+                        </span>
+                    </div>
+                    <script>
+                        function copyLink(link) {
+                            navigator.clipboard.writeText(link).then(() => {
+                                alert('Link berhasil disalin!');
+                            }).catch(() => {
+                                alert('Gagal menyalin link.');
+                            });
+                        }
+                    </script>
 
-                    <div class="mt-5">
+                    <div class="mt-4">
                         <hr class="my-2">
                     </div>
 
-
-                    <!-- Komentar Statis -->
+                    <!-- Komentar Dinamis -->
                     <h4 class="fw-bold mt-5 mb-3">Komentar</h4>
-                    <div class="mb-4">
-                        <textarea class="form-control" rows="4" placeholder="Tulis komentar..."></textarea>
-                        <button class="btn btn-danger mt-2">Kirim</button>
-                    </div>
 
-                    @for ($i = 0; $i < 3; $i++)
-                        <div class="comment-item">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <strong>Username</strong>
-                                <small class="text-muted">5 hari lalu</small>
+                    <!-- Form Komentar Baru -->
+                    @auth
+                        <form action="{{ route('user.comment.store', $berita->id) }}" method="POST" class="mb-4">
+                            @csrf
+                            <textarea class="form-control" name="content" rows="4" placeholder="Tulis komentar..."></textarea>
+                            <button type="submit" class="btn btn-danger mt-2">Kirim</button>
+                        </form>
+                    @else
+                        <div class="alert alert-warning">Silakan <a href="{{ route('login') }}">login</a> untuk menulis
+                            komentar.</div>
+                    @endauth
+
+                    <!-- Daftar Komentar -->
+                    @php
+                        $colors = ['#dc2626', '#16a34a', '#2563eb', '#ca8a04', '#0e7490', '#7c3aed', '#f59e0b', '#14b8a6'];
+                        function getUserColor($userId, $colors)
+                        {
+                            return $colors[$userId % count($colors)];
+                        }
+                    @endphp
+
+                    @foreach($berita->comments->where('parent_id', null) as $comment)
+                        @php $parentColor = getUserColor($comment->user->id, $colors); @endphp
+
+                        <!-- Komentar Utama -->
+                        <div class="d-flex mt-2 mb-4 comment-item">
+                            <div class="flex-shrink-0">
+                                <a href="{{ route('user.profile', $comment->user->id) }}" class="text-decoration-none">
+                                    <div class="rounded-circle text-white text-center"
+                                        style="background-color: {{ $parentColor }}; width:40px; height:40px; line-height:40px;">
+                                        {{ strtoupper(substr($comment->user->name, 0, 1)) }}
+                                    </div>
+                                </a>
+
                             </div>
-                            <p>Lorem ipsum dolor sit amet, komentar statis pengguna...</p>
-                            <div class="d-flex align-items-center gap-3">
-                                <span>👍 0</span>
-                                <span>💬 Balas</span>
+                            <div class="ms-3 w-100">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <a href="{{ route('user.profile', $comment->user->id) }}" class="fw-bold text-dark text-decoration-none">
+                                            {{ ucfirst(explode(' ', $comment->user->name)[0]) }}
+                                        </a>
+
+                                        <span class="text-muted small ms-2">{{ $comment->created_at->diffForHumans() }}</span>
+                                    </div>
+                                </div>
+                                <div class="mt-1 mb-2">{{ $comment->content }}</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <!-- Reaksi -->
+                                    <form action="{{ route('user.comment.react', $comment->id) }}" method="POST"
+                                        class="d-inline">
+                                        @csrf
+                                        <input type="hidden" name="reaction" value="like">
+                                        <button type="submit"
+                                            class="btn btn-sm p-0 border-0 bg-transparent {{ $comment->reactions->where('reaction', 1)->where('user_id', auth()->id())->count() ? 'text-primary' : 'text-secondary' }}">
+                                            <i class="fa-solid fa-thumbs-up"></i>
+                                            {{ $comment->reactions->where('reaction', 1)->count() }}
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('user.comment.react', $comment->id) }}" method="POST"
+                                        class="d-inline">
+                                        @csrf
+                                        <input type="hidden" name="reaction" value="dislike">
+                                        <button type="submit"
+                                            class="btn btn-sm p-0 border-0 bg-transparent {{ $comment->reactions->where('reaction', -1)->where('user_id', auth()->id())->count() ? 'text-primary' : 'text-secondary' }}">
+                                            <i class="fa-solid fa-thumbs-down"></i>
+                                        </button>
+                                    </form>
+                                    @auth
+                                        <button type="button" class="btn btn-sm p-0 border-0 text-secondary bg-transparent"
+                                            onclick="document.getElementById('reply-box-{{ $comment->id }}').classList.toggle('d-none')">
+                                            Balas
+                                        </button>
+                                    @endauth
+                                    @if(auth()->id() === $comment->user_id)
+                                        <form action="{{ route('user.comment.delete', $comment->id) }}" method="POST"
+                                            class="d-inline">
+                                            @csrf @method('DELETE')
+                                            <button class="btn btn-sm p-0 border-0 text-secondary bg-transparent">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+
+                                <!-- Form Balas Komentar Utama -->
+                                <div id="reply-box-{{ $comment->id }}" class="mt-3 d-none">
+                                    <form action="{{ route('user.comment.reply', $comment->id) }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="news_id" value="{{ $berita->id }}">
+                                        <textarea name="content" rows="2" class="form-control mb-2"
+                                            placeholder="Tulis balasan..."></textarea>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="text-muted"
+                                                onclick="document.getElementById('reply-box-{{ $comment->id }}').classList.add('d-none')">Batal</button>
+                                            <button type="submit" class="btn btn-sm btn-primary text-white">Kirim</button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <!-- Daftar Balasan -->
+                                @if($comment->replies->count() > 0)
+                                    <button type="button" class="btn btn-link p-0 mt-2 text-primary"
+                                        onclick="document.getElementById('replies-{{ $comment->id }}').classList.toggle('d-none')">
+                                        <i class="fa-solid fa-caret-down"></i> {{ $comment->replies->count() }} balasan
+                                    </button>
+                                    <div id="replies-{{ $comment->id }}" class="mt-3 d-none">
+                                        @foreach($comment->replies as $reply)
+                                            @php
+                                                $replyColor = getUserColor($reply->user->id, $colors);
+                                            @endphp
+                                            <div class="d-flex mt-3 comment-item reply">
+                                                <div class="flex-shrink-0">
+                                                    <a href="{{ route('user.profile', $reply->user->id) }}" class="text-decoration-none">
+                                                        <div class="rounded-circle text-white text-center"
+                                                            style="background-color: {{ $replyColor }}; width:35px; height:35px; line-height:35px;">
+                                                            {{ strtoupper(substr($reply->user->name, 0, 1)) }}
+                                                        </div>
+                                                    </a>
+
+                                                </div>
+                                                <div class="ms-3 w-100">
+                                                    <div>
+                                                        <a href="{{ route('user.profile', $reply->user->id) }}" class="fw-bold text-dark text-decoration-none">
+                                                            {{ ucfirst(explode(' ', $reply->user->name)[0]) }}
+                                                        </a>
+
+                                                        <span
+                                                            class="text-muted small ms-2">{{ $reply->created_at->diffForHumans() }}</span>
+                                                    </div>
+                                                    <div class="mt-1 mb-2">
+                                                        {{ $reply->content }}
+                                                    </div>
+                                                    <div class="d-flex align-items-center gap-3">
+                                                        <!-- Reaksi -->
+                                                        <form action="{{ route('user.comment.react', $reply->id) }}" method="POST"
+                                                            class="d-inline">
+                                                            @csrf
+                                                            <input type="hidden" name="reaction" value="like">
+                                                            <button type="submit"
+                                                                class="btn btn-sm p-0 border-0 bg-transparent {{ $reply->reactions->where('reaction', 1)->where('user_id', auth()->id())->count() ? 'text-primary' : 'text-secondary' }}">
+                                                                <i class="fa-solid fa-thumbs-up"></i>
+                                                                {{ $reply->reactions->where('reaction', 1)->count() }}
+                                                            </button>
+                                                        </form>
+                                                        <form action="{{ route('user.comment.react', $reply->id) }}" method="POST"
+                                                            class="d-inline">
+                                                            @csrf
+                                                            <input type="hidden" name="reaction" value="dislike">
+                                                            <button type="submit"
+                                                                class="btn btn-sm p-0 border-0 bg-transparent {{ $reply->reactions->where('reaction', -1)->where('user_id', auth()->id())->count() ? 'text-primary' : 'text-secondary' }}">
+                                                                <i class="fa-solid fa-thumbs-down"></i>
+                                                            </button>
+                                                        </form>
+
+                                                        @auth
+                                                            <!-- Tombol Balas ke balasan -->
+                                                            <button type="button"
+                                                                class="btn btn-sm p-0 border-0 text-secondary bg-transparent"
+                                                                onclick="document.getElementById('reply-box-{{ $reply->id }}').classList.toggle('d-none')">
+                                                                Balas
+                                                            </button>
+                                                        @endauth
+
+                                                        @if(auth()->id() === $reply->user_id)
+                                                            <form action="{{ route('user.comment.delete', $reply->id) }}" method="POST"
+                                                                class="d-inline">
+                                                                @csrf @method('DELETE')
+                                                                <button class="btn btn-sm p-0 border-0 text-secondary bg-transparent">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    </div>
+
+                                                    <!-- Form balas terhadap balasan -->
+                                                    <div id="reply-box-{{ $reply->id }}" class="mt-3 d-none">
+                                                        <form action="{{ route('user.comment.reply', $comment->id) }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="news_id" value="{{ $berita->id }}">
+                                                            @php
+                                                                $mentionName = '@' . explode(' ', $reply->user->name)[0] . ', ';
+                                                            @endphp
+                                                            <textarea name="content" rows="2" class="form-control mb-2"
+                                                                placeholder="Tulis balasan...">{{ $mentionName }}</textarea>
+
+                                                            <div class="d-flex gap-2">
+                                                                <button type="button" class="text-muted"
+                                                                    onclick="document.getElementById('reply-box-{{ $reply->id }}').classList.add('d-none')">Batal</button>
+                                                                <button type="submit"
+                                                                    class="btn btn-sm btn-primary text-white">Kirim</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
                             </div>
                         </div>
-                    @endfor
+                    @endforeach
+
                 </div>
             </div>
 

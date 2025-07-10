@@ -36,12 +36,19 @@
 
             <!-- Search -->
             <div class="flex-1 mx-6 hidden sm:flex justify-center">
-                <form action="{{ route('home') }}" method="GET" class="w-full max-w-md">
-                    <input type="text" name="q" placeholder="Cari berita..."
-                        style="width: 100%; padding: 0.5rem 1rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; outline: none; transition: border 0.2s ease;"
-                        onfocus="this.style.borderColor='#dc2626';" onblur="this.style.borderColor='#d1d5db';" />
+                <form action="{{ route('user.search') }}" method="GET" class="w-full max-w-md">
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari berita..."
+                            style="flex: 1; padding: 0.5rem 1rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; outline: none; transition: border 0.2s ease;"
+                            onfocus="this.style.borderColor='#dc2626';" onblur="this.style.borderColor='#d1d5db';" />
+                        <button type="submit"
+                            style="background-color: #dc2626; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; font-size: 0.875rem; cursor: pointer;">
+                            Cari
+                        </button>
+                    </div>
                 </form>
             </div>
+
 
             <!-- Auth -->
             <div class="flex items-center text-sm">
@@ -59,7 +66,7 @@
                             </button>
                         </x-slot>
                         <x-slot name="content">
-                            <x-dropdown-link :href="route('profile.edit')">Profile</x-dropdown-link>
+                            <x-dropdown-link :href="route('profile.edit')">Settings</x-dropdown-link>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <x-dropdown-link :href="route('logout')"

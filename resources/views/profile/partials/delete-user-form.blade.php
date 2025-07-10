@@ -1,55 +1,43 @@
-<section class="space-y-6">
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Delete Account') }}
-        </h2>
+<form id="delete-account-form" method="POST" action="{{ route('profile.destroy') }}" class="w-full">
+    @csrf
+    @method('delete')
 
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
-        </p>
-    </header>
+    <!-- Deskripsi -->
+    <p class="text-sm text-gray-700 mb-4">
+        Setelah akun dihapus, semua data Anda akan hilang secara permanen. Tindakan ini tidak dapat dibatalkan.
+    </p>
 
-    <x-danger-button
-        x-data=""
-        x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-    >{{ __('Delete Account') }}</x-danger-button>
+    <!-- Input Password -->
+    <div class="mb-4">
+        <x-input-label for="password" value="Konfirmasi dengan Password" />
+        <x-text-input id="delete_password" name="password" type="password" class="mt-1 block w-full"
+            autocomplete="current-password" required />
+        <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
+    </div>
 
-    <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
-        <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
-            @csrf
-            @method('delete')
+    <!-- Tombol Hapus -->
+    <div class="mt-6">
+        <x-danger-button id="delete-account-button" onclick="return confirm('Yakin ingin menghapus akun?')"
+            class="bg-red-600 hover:bg-red-700 disabled:opacity-50" disabled>
+            {{ __('Hapus Akun') }}
+        </x-danger-button>
+    </div>
+</form>
 
-            <h2 class="text-lg font-medium text-gray-900">
-                {{ __('Are you sure you want to delete your account?') }}
-            </h2>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const passwordInput = document.getElementById('delete_password');
+        const deleteButton = document.getElementById('delete-account-button');
 
-            <p class="mt-1 text-sm text-gray-600">
-                {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
-            </p>
+        function toggleDeleteButton() {
+            if (passwordInput.value.trim().length > 0) {
+                deleteButton.removeAttribute('disabled');
+            } else {
+                deleteButton.setAttribute('disabled', 'disabled');
+            }
+        }
 
-            <div class="mt-6">
-                <x-input-label for="password" value="{{ __('Password') }}" class="sr-only" />
-
-                <x-text-input
-                    id="password"
-                    name="password"
-                    type="password"
-                    class="mt-1 block w-3/4"
-                    placeholder="{{ __('Password') }}"
-                />
-
-                <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
-            </div>
-
-            <div class="mt-6 flex justify-end">
-                <x-secondary-button x-on:click="$dispatch('close')">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
-
-                <x-danger-button class="ml-3">
-                    {{ __('Delete Account') }}
-                </x-danger-button>
-            </div>
-        </form>
-    </x-modal>
-</section>
+        // Pantau input password
+        passwordInput.addEventListener('input', toggleDeleteButton);
+    });
+</script>

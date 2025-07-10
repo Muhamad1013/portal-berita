@@ -458,4 +458,7 @@
                     </div>
                 @endforeach
             </div>
-</div> @endsection
+        </div>
+
+    </div>
+@endsection
