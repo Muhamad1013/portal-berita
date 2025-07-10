@@ -25,6 +25,7 @@ class HomeController extends Controller
                 return collect([]);
             }
 
+
             return collect($data['articles'])->map(function ($item) {
                 return [
                     'title' => $item['title'] ?? 'Judul tidak tersedia',
@@ -103,6 +104,7 @@ class HomeController extends Controller
                 return $item;
             });
         }
+
 
         return view('home', compact('articles', 'kategoriNonLoginList'));
     }

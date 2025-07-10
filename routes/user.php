@@ -8,11 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShowProfileController;
 
 Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/beranda', [UserController::class, 'beranda'])->name('beranda');
-    Route::get('/beranda/kategori/{categoryId}', [UserController::class, 'filterByCategory'])->name('user.beranda.kategori');
-    Route::get('/berita/{id}', [UserController::class, 'show'])->name('berita.show');
 
-    Route::get('/search', [UserController::class, 'search'])->name('user.search');
 
     Route::post('/berita/{id}/komentar', [UserController::class, 'storeComment'])->name('user.comment.store');
     Route::post('/komentar/{id}/reply', [UserController::class, 'replyComment'])->name('user.comment.reply');
@@ -31,6 +27,13 @@ Route::middleware(['auth', 'role:user'])->group(function () {
         return view('auth.verify-email');
     })->name('verification.notice');
 });
+
+Route::get('/beranda', [UserController::class, 'beranda'])->name('beranda');
+Route::get('/beranda/kategori/{categoryId}', [UserController::class, 'filterByCategory'])->name('user.beranda.kategori');
+Route::get('/berita/{id}', [UserController::class, 'show'])->name('berita.show');
+
+// Untuk user yang login
+Route::get('/search', [UserController::class, 'search'])->name('user.search');
 
 // ✅ Verifikasi Email (di luar middleware role:user)
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
