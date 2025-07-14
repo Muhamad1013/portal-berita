@@ -23,6 +23,12 @@ class News extends Model
         return $this->belongsToMany(Category::class, 'category_news');
     }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+
     public function editor()
     {
         return $this->belongsTo(User::class, 'user_id'); // sesuaikan dengan nama kolom foreign key di tabel news

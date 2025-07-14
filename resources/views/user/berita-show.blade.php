@@ -399,7 +399,8 @@
                             <div class="ms-3 w-100">
                                 <div class="d-flex justify-content-between">
                                     <div>
-                                        <a href="{{ route('user.profile', $comment->user->id) }}" class="fw-bold text-dark text-decoration-none">
+                                        <a href="{{ route('user.profile', $comment->user->id) }}"
+                                            class="fw-bold text-dark text-decoration-none">
                                             {{ ucfirst(explode(' ', $comment->user->name)[0]) }}
                                         </a>
 
@@ -473,7 +474,8 @@
                                             @endphp
                                             <div class="d-flex mt-3 comment-item reply">
                                                 <div class="flex-shrink-0">
-                                                    <a href="{{ route('user.profile', $reply->user->id) }}" class="text-decoration-none">
+                                                    <a href="{{ route('user.profile', $reply->user->id) }}"
+                                                        class="text-decoration-none">
                                                         <div class="rounded-circle text-white text-center"
                                                             style="background-color: {{ $replyColor }}; width:35px; height:35px; line-height:35px;">
                                                             {{ strtoupper(substr($reply->user->name, 0, 1)) }}
@@ -483,7 +485,8 @@
                                                 </div>
                                                 <div class="ms-3 w-100">
                                                     <div>
-                                                        <a href="{{ route('user.profile', $reply->user->id) }}" class="fw-bold text-dark text-decoration-none">
+                                                        <a href="{{ route('user.profile', $reply->user->id) }}"
+                                                            class="fw-bold text-dark text-decoration-none">
                                                             {{ ucfirst(explode(' ', $reply->user->name)[0]) }}
                                                         </a>
 
