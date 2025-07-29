@@ -16,9 +16,6 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->group(function () {
     Route::get('/profile/password', [AdminProfileController::class, 'editPassword'])->name('admin.profile.password');
     Route::put('/profile/password', [AdminProfileController::class, 'updatePassword'])->name('admin.profile.password.update');
 
-
-
-
     // News CRUD
     Route::resource('news', AdminNewsController::class)->except('show');
     Route::get('news', [AdminNewsController::class, 'index'])->name('admin.news.index');
